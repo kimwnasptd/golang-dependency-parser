@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "parser"
+version = "0.1.0"
+description = "Golang module parser"
+authors = ["Kimonas Sotirchos <kimwnasptd@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.11.7"
+click = "^8.2.1"
+sh = "^2.2.2"
+
+[tool.poetry.scripts]
+cli = "parser.main:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
