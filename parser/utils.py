@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import subprocess
 from parser.package import Package
 from typing import List
@@ -25,8 +26,20 @@ def change_dir_run_command(dir: str, command: List[str]) -> str:
     return result.stdout
 
 
+def remove_vendor_dir(root_dir: str):
+    # Remove the vendor/ folder if it exists
+    vendor_dir = root_dir + "/vendor"
+    if not os.path.exists(vendor_dir):
+        return
+
+    log.info("Removing vendor dir")
+    shutil.rmtree(vendor_dir)
+
+
 def read_go_list_packages(go_mod_folder: str) -> List[Package]:
     packages = []
+
+    remove_vendor_dir(go_mod_folder)
 
     cmd = ["go", "list", "-m", "all"]
     for line in change_dir_run_command(go_mod_folder, cmd).split("\n"):
@@ -34,6 +47,9 @@ def read_go_list_packages(go_mod_folder: str) -> List[Package]:
             continue
 
         if "=>" in line:
+            # module pointing to another go.mod that will be handled in the graph
+            splitted_line = line.split(" ")
+            packages.append(Package(splitted_line[0], splitted_line[1]))
             continue
 
         if " " not in line:
@@ -55,8 +71,12 @@ def read_go_mod_graph_packages(go_mod_folder: str) -> List[tuple[Package, Packag
         if not line:
             continue
 
+        if "toolchain@" in line:
+            continue
+
         source, requirement = line.split(" ")
 
+        # top level package won't have a @
         source_splitted = source.split("@")
         if "@" in source:
             source_pkg = Package(*source_splitted)
@@ -64,10 +84,7 @@ def read_go_mod_graph_packages(go_mod_folder: str) -> List[tuple[Package, Packag
             source_pkg = Package(source_splitted[0], "")
 
         req_splitted = requirement.split("@")
-        if "@" in requirement:
-            req_pkg = Package(*req_splitted)
-        else:
-            req_pkg = Package(req_splitted[0], "")
+        req_pkg = Package(*req_splitted)
 
         packages.append((source_pkg, req_pkg))
 
@@ -78,6 +95,7 @@ def add_package_dependencies(
     go_list_packages: List[Package],
     go_mod_graph_packages: List[tuple[Package, Package]],
 ):
+    # Adds only the import name, and not the version
     for package in go_list_packages:
         log.info("Filling in all dependency packages of: %s", package.import_name)
         for root_package, dependant in go_mod_graph_packages:

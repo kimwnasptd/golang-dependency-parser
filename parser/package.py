@@ -26,3 +26,12 @@ class Package:
 
     def __hash__(self) -> int:
         return hash(self.__repr__())
+
+
+class PackageLayer:
+    bootstrap: bool
+    packages: Set[Package]
+
+    def __init__(self) -> None:
+        self.packages = set()
+        self.bootstrap = False
