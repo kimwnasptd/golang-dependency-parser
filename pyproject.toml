@@ -12,7 +12,7 @@ click = "^8.2.1"
 sh = "^2.2.2"
 
 [tool.poetry.scripts]
-cli = "parser.main:run"
+parse = "parser.main:parse"
 
 [build-system]
 requires = ["poetry-core"]

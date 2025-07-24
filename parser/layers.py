@@ -53,7 +53,7 @@ def get_bootstrap_dependency(
     raise RuntimeError("Most frequent package not found in initial list.")
 
 
-def create_package_layers(packages: List[Package]) -> List[List[Package]]:
+def create_package_layers(packages: List[Package]) -> List[PackageLayer]:
     layers: List[PackageLayer] = []
     packages_of_previous_layers: Set[str] = set()
 

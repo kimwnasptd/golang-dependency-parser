@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
     "go-mod-folder",
     type=click.Path(exists=False, file_okay=True, dir_okay=True, readable=True),
 )
-def run(go_mod_folder: str):
+def parse(go_mod_folder: str):
     log.info("Greating list of modules.")
     go_list_packages = read_go_list_packages(go_mod_folder)
 

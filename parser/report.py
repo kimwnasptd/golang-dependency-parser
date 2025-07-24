@@ -6,8 +6,9 @@ from typing import List
 
 def create_report(name: str, layers: List[PackageLayer]):
     """Create a CSV report based on the layers"""
-    report_path = os.path.basename(name) + "-sd-report.csv"
-    headers = ["Package", "Version", "Bootstrap", "Layer"]
+    component = os.path.basename(name)
+    report_path = component + "-sd-report.csv"
+    headers = ["Package", "Version", "Bootstrap", "Component", "Layer"]
 
     data = []
     for i, layer in enumerate(layers):
@@ -16,7 +17,7 @@ def create_report(name: str, layers: List[PackageLayer]):
             if layer.bootstrap:
                 bootstrap = "Bootstrap"
 
-            data.append([package.import_name, package.version, bootstrap, i])
+            data.append([package.import_name, package.version, bootstrap, component, i])
     try:
         # Open the file in write mode ('w') with newline='' to prevent extra blank rows
         with open(report_path, "w", newline="", encoding="utf-8") as csvfile:
