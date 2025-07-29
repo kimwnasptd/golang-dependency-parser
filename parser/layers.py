@@ -35,7 +35,7 @@ def get_bootstrap_dependency(
     for package in packages:
         for dependency in package.depends:
             # if package already in previous layers, then we don't need to re-parse it
-            if dependency in layer_packages:
+            if dependency.lower() in layer_packages or dependency in layer_packages:
                 continue
 
             if dependency == "go":
@@ -43,6 +43,7 @@ def get_bootstrap_dependency(
 
             frequencies.append(dependency)
 
+    print(layer_packages)
     bootstrap_package_name = max(frequencies, key=frequencies.count)
     for package in packages:
         if package.import_name == bootstrap_package_name:
@@ -73,7 +74,10 @@ def create_package_layers(packages: List[Package]) -> List[PackageLayer]:
                 if dependency == "go":
                     continue
 
-                if dependency not in packages_of_previous_layers:
+                if (
+                    dependency.lower() not in packages_of_previous_layers
+                    and dependency not in packages_of_previous_layers
+                ):
                     log.info("Dependency not parsed yet: %s", dependency)
                     dependencies_in_previous_layers = False
                     break

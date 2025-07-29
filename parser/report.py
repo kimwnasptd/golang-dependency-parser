@@ -1,7 +1,11 @@
 import csv
+import logging
 import os
+import shutil
 from parser.package import PackageLayer
 from typing import List
+
+log = logging.getLogger(__name__)
 
 
 def create_report(name: str, layers: List[PackageLayer]):

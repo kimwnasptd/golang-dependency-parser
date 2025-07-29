@@ -101,3 +101,16 @@ def add_package_dependencies(
         for root_package, dependant in go_mod_graph_packages:
             if root_package.import_name == package.import_name:
                 package.depends.add(dependant.import_name)
+
+
+def read_golang_packages(go_mod_folder: str) -> List[Package]:
+    log.info("Greating list of modules.")
+    go_list_packages = read_go_list_packages(go_mod_folder)
+
+    log.info("Creating modules graph.")
+    go_mod_graph_packages = read_go_mod_graph_packages(go_mod_folder)
+
+    log.info("Filling in dependencies for all the packages.")
+    add_package_dependencies(go_list_packages, go_mod_graph_packages)
+
+    return go_list_packages
