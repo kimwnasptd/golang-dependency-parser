@@ -10,6 +10,9 @@ log = logging.getLogger(__name__)
 
 def create_report(name: str, layers: List[PackageLayer]):
     """Create a CSV report based on the layers"""
+    if name[-1] == "/":
+        name = name[:-1]
+
     component = os.path.basename(name)
     report_path = component + "-sd-report.csv"
     headers = ["Package", "Version", "Bootstrap", "Component", "Layer"]
